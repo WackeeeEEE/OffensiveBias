@@ -1,6 +1,7 @@
+extern crate serde_json;
 use std::fs::File;
-use std::io::prelude::*;
-use std::io::BufReader;
+use std::io::Read;
+
 use serenity::{
     model::{channel::Message, gateway::Ready},
     prelude::*,
@@ -39,13 +40,21 @@ impl EventHandler for Handler {
 
 fn main() {
     // Configure the client with your Discord bot token in the environment.
-    let configFile = File::open("CONFIG.json")?;
-    let mut buf_reader = BufReader::new(configFile);
-    let mut contents = String::new();
-    buf_reader.read_to_string(&mut contents)?;
-    let token = contents;
-        .expect("Expected a token in the environment");
-    println!(token);
+    let configFile = File::open("CONFIG.json")
+        .expect("file should open read-only");
+    let jsonFile: serde_json::Value = serde_json::from_reader(configFile)
+        .expect("file should be proper json");
+    let token = jsonFile.get("token")
+        .expect("file should have token");
+    // let mut buf_reader = BufReader::new(configFile);
+    // let mut contents = String::new();
+    // buf_reader.read_to_string(&mut contents)?;
+    // let token = contents;
+    //     .expect("Expected a token in the environment");
+    // println!(token);
+    // //let token = env::var("DISCORD_TOKEN")
+        //.expect("Expected a token in the environment");
+
     // Create a new instance of the Client, logging in as a bot. This will
     // automatically prepend your bot token with "Bot ", which is a requirement
     // by Discord for bot users.
