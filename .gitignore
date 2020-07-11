@@ -1,3 +1,3 @@
 /target
-*.json
+CONFIG.json
 /src/OffensiveBias.rs
